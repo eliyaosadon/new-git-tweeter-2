@@ -1,24 +1,19 @@
-const API_URL = 'https://agsaphbcwazvuenwsnca.supabase.co/rest/v1/Tweets';
-const API_KEY = 'sb_publishable_3kTDeTVg6NfWrboe7oMopA_X-cuT_ih';
-
-const headers = {
-    'Content-Type': 'application/json',
-    'apikey': API_KEY,
-    'Prefer': 'return=representation'
-};
+import { supabase } from './supabase';
 
 export const getTweets = async () => {
     try {
-        const response = await fetch(`${API_URL}?order=date.desc`, {
-            method: 'GET',
-            headers: headers
-        });
+        const { data, error } = await supabase
+            .from('Tweets')
+            .select('*')
+            .order('date', { ascending: false });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch tweets');
+        console.log('📊 Supabase returned:', data);  // ← Add this
+        console.log('❌ Any error?', error);          // ← Add this
+
+        if (error) {
+            throw error;
         }
 
-        const data = await response.json();
         return { data, error: null };
     } catch (error) {
         console.error('Error fetching tweets:', error);
@@ -28,17 +23,15 @@ export const getTweets = async () => {
 
 export const createTweet = async (tweetData) => {
     try {
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(tweetData)
-        });
+        const { data, error } = await supabase
+            .from('Tweets')
+            .insert([tweetData])
+            .select();
 
-        if (!response.ok) {
-            throw new Error('Failed to create tweet');
+        if (error) {
+            throw error;
         }
 
-        const data = await response.json();
         return { data: data[0], error: null };
     } catch (error) {
         console.error('Error creating tweet:', error);

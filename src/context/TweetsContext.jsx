@@ -64,7 +64,7 @@ export const TweetsProvider = ({ children, userName }) => {
 
         const newTweet = {
             content: content,
-            userName: userName,
+            userName: userName,  // ← Make sure it's userName with capital N
             date: new Date().toISOString()
         };
 
